@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquid Tree AI - Photobioreactor Monitoring Prototype</title>
+  <meta name="description" content="Microscopy monitoring, simulated telemetry, and experimental formula-based growth estimates for an urban Chlorella vulgaris Liquid Tree dashboard.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Top Navigation & System Status Bar -->
+  <header class="top-nav" id="main-header">
+    <div class="nav-brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12A10 10 0 0 1 12 2z" stroke="#2ea043"/>
+          <path d="M12 6v12M8 10l4-4 4 4M8 14l4 4 4-4" stroke="#56d364"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1 class="brand-title">Liquid Tree AI</h1>
+        <span class="brand-subtitle">Microalgae Photobioreactor Monitoring Prototype</span>
+      </div>
+    </div>
+
+    <div class="nav-status">
+      <div class="status-chip optimal" id="reactor-status-chip">
+        <span class="pulse-dot"></span>
+        <span id="chip-status-text">DEMO STATUS: NOMINAL</span>
+      </div>
+      <div class="telemetry-badge" id="telemetry-badge" title="Telemetry data source">
+        <span class="badge-tag">DATA SOURCE</span>
+        <span class="badge-label" id="data-source-label">SIMULATED URBAN PBR</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="btn-refresh-all" title="Refresh Telemetry">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        <span>Refresh Telemetry</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Application Container -->
+  <main class="dashboard-grid" id="dashboard-container">
+
+    <!-- Row 1: Reactor Overview Cards -->
+    <section class="section-full overview-cards-grid" id="reactor-overview-section">
+      <div class="glass-card stat-card" id="card-cell-density">
+        <div class="card-header-compact">
+          <span class="stat-label">CULTURE DENSITY</span>
+          <span class="info-badge">OD680 EQUIV</span>
+        </div>
+        <div class="stat-main">
+          <span class="stat-value" id="stat-cell-density">18.4</span>
+          <span class="stat-unit">×10⁶ cells/mL</span>
+        </div>
+        <div class="stat-footer">
+          <span class="trend-indicator positive">↑ +2.2M / 24h</span>
+          <span class="stat-sub">Est. Dry Biomass: <strong id="stat-dry-biomass">0.92 g/L</strong></span>
+        </div>
+      </div>
+
+      <div class="glass-card stat-card" id="card-co2-fixed">
+        <div class="card-header-compact">
+          <span class="stat-label">ILLUSTRATIVE CO₂ ESTIMATE</span>
+          <span class="info-badge">SIMULATED</span>
+        </div>
+        <div class="stat-main">
+          <span class="stat-value" id="stat-co2-fixed">1.15</span>
+          <span class="stat-unit">kg CO₂ / day</span>
+        </div>
+        <div class="stat-footer">
+          <span class="stat-sub">Illustrative only; not measured or validated capture</span>
+          <span class="stat-sub">Volume: <strong>600 L Working Vol.</strong></span>
+        </div>
+      </div>
+
+      <div class="glass-card stat-card" id="card-culture-age">
+        <div class="card-header-compact">
+          <span class="stat-label">CULTURE LIFECYCLE</span>
+          <span class="info-badge">BATCH STAGE</span>
+        </div>
+        <div class="stat-main">
+          <span class="stat-value" id="stat-culture-day">Day 8</span>
+          <span class="stat-unit">Batch Cycle</span>
+        </div>
+        <div class="stat-footer">
+          <span class="stage-tag exponential" id="stat-culture-phase">EXPONENTIAL PHASE</span>
+          <span class="stat-sub">Harvest Readiness: <strong id="stat-harvest-readiness">76.7%</strong></span>
+        </div>
+      </div>
+
+      <div class="glass-card stat-card" id="card-reactor-health">
+        <div class="card-header-compact">
+          <span class="stat-label">REACTOR PROFILE</span>
+          <span class="info-badge">ID: LT-01</span>
+        </div>
+        <div class="stat-main">
+          <span class="stat-value small" id="stat-strain-name">C. vulgaris</span>
+          <span class="stat-unit">Phototrophic</span>
+        </div>
+        <div class="stat-footer">
+          <span class="status-pill ok">Simulated Status • No Hardware Control</span>
+          <span class="stat-sub">Light: <strong>16h:8h Diurnal</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row 2: Live Telemetry & Growth Predictor -->
+    <div class="section-columns-2" id="telemetry-prediction-row">
+
+      <!-- Sensor Telemetry Panel -->
+      <section class="glass-card panel-card" id="sensor-telemetry-panel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2 class="panel-title">Bioreactor Environmental Telemetry</h2>
+            <span class="source-tag simulated" id="sensor-source-tag">SIMULATED STREAM</span>
+          </div>
+          <span class="source-caption">Simulated parametric values; no live hardware connection</span>
+        </div>
+
+        <div class="sensors-grid" id="sensors-grid">
+          <!-- pH Gauge Card -->
+          <div class="sensor-card" id="sensor-card-ph">
+            <div class="sensor-top">
+              <span class="sensor-name">Culture pH</span>
+              <span class="sensor-status-badge ok" id="ph-status">OPTIMAL</span>
+            </div>
+            <div class="sensor-body">
+              <span class="sensor-value" id="val-ph">7.42</span>
+              <span class="sensor-unit">pH</span>
+            </div>
+            <div class="sensor-bar-track">
+              <div class="sensor-bar-fill" id="bar-ph" style="width: 72%;"></div>
+            </div>
+            <div class="sensor-limits">
+              <span>Min: 6.5</span>
+              <span>Opt: 7.0 - 7.8</span>
+              <span>Max: 8.5</span>
+            </div>
+          </div>
+
+          <!-- Temperature Card -->
+          <div class="sensor-card" id="sensor-card-temp">
+            <div class="sensor-top">
+              <span class="sensor-name">Temperature</span>
+              <span class="sensor-status-badge ok" id="temp-status">STABLE</span>
+            </div>
+            <div class="sensor-body">
+              <span class="sensor-value" id="val-temp">23.6</span>
+              <span class="sensor-unit">°C</span>
+            </div>
+            <div class="sensor-bar-track">
+              <div class="sensor-bar-fill" id="bar-temp" style="width: 58%;"></div>
+            </div>
+            <div class="sensor-limits">
+              <span>Min: 15.0</span>
+              <span>Opt: 20.0 - 26.0</span>
+              <span>Max: 32.0</span>
+            </div>
+          </div>
+
+          <!-- Dissolved Oxygen Card -->
+          <div class="sensor-card" id="sensor-card-do">
+            <div class="sensor-top">
+              <span class="sensor-name">Dissolved O₂</span>
+              <span class="sensor-status-badge ok" id="do-status">HEALTHY</span>
+            </div>
+            <div class="sensor-body">
+              <span class="sensor-value" id="val-do">8.7</span>
+              <span class="sensor-unit">mg/L</span>
+            </div>
+            <div class="sensor-bar-track">
+              <div class="sensor-bar-fill" id="bar-do" style="width: 65%;"></div>
+            </div>
+            <div class="sensor-limits">
+              <span>Hypoxia: <4.0</span>
+              <span>Sat: 6.0 - 10.0</span>
+              <span>High: >14.0</span>
+            </div>
+          </div>
+
+          <!-- CO2 Inflow Card -->
+          <div class="sensor-card" id="sensor-card-co2">
+            <div class="sensor-top">
+              <span class="sensor-name">Inlet CO₂ Level</span>
+              <span class="sensor-status-badge ok" id="co2-status">ENRICHED</span>
+            </div>
+            <div class="sensor-body">
+              <span class="sensor-value" id="val-co2">412</span>
+              <span class="sensor-unit">ppm</span>
+            </div>
+            <div class="sensor-bar-track">
+              <div class="sensor-bar-fill" id="bar-co2" style="width: 45%;"></div>
+            </div>
+            <div class="sensor-limits">
+              <span>Ambient: 400</span>
+              <span>Sparging: 800 - 1200</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Predictive Biomass Engine Panel -->
+      <section class="glass-card panel-card" id="growth-prediction-panel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2 class="panel-title">Experimental Formula-Based Growth Estimate</h2>
+            <span class="source-tag experimental" id="model-source-tag">NOT A TRAINED MODEL</span>
+          </div>
+          <span class="source-caption">Hand-coded logistic-style formula; not validated as a predictive model</span>
+        </div>
+
+        <form class="prediction-form" id="prediction-form" onsubmit="return false;">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="input-density" class="form-label">Current Density (×10⁶/mL)</label>
+              <input type="number" step="0.1" class="form-control" id="input-density" value="18.4" min="0.5" max="40.0">
+            </div>
+            <div class="form-group">
+              <label for="input-ph" class="form-label">Culture pH</label>
+              <input type="number" step="0.05" class="form-control" id="input-ph" value="7.42" min="5.5" max="9.5">
+            </div>
+            <div class="form-group">
+              <label for="input-light" class="form-label">Light PPFD (μmol·m⁻²·s⁻¹)</label>
+              <input type="number" step="10" class="form-control" id="input-light" value="240" min="50" max="600">
+            </div>
+            <div class="form-group">
+              <label for="input-co2" class="form-label">CO₂ Inflow (ppm)</label>
+              <input type="number" step="25" class="form-control" id="input-co2" value="412" min="300" max="2000">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" id="btn-run-prediction" type="button">
+              <span>Compute Formula-Based Estimate</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="prediction-results" id="prediction-results-box">
+          <div class="pred-summary-card">
+            <div class="pred-highlight">
+              <span class="pred-title">Estimated Next-Day Density (N<sub>t+1</sub>)</span>
+              <div class="pred-number-group">
+                <span class="pred-number" id="pred-next-density">20.84</span>
+                <span class="pred-unit">×10⁶ cells/mL</span>
+              </div>
+              <span class="pred-subtext" id="pred-delta-text">Formula estimate change: +2.44M cells/mL (+13.3%)</span>
+            </div>
+
+            <div class="pred-metrics-row">
+              <div class="pred-metric-item">
+                <span class="metric-label">Specific Growth Rate (μ)</span>
+                <span class="metric-val" id="pred-growth-rate">0.245 day⁻¹</span>
+              </div>
+              <div class="pred-metric-item">
+                <span class="metric-label">Est. Doubling Time</span>
+                <span class="metric-val" id="pred-doubling-time">2.83 days</span>
+              </div>
+              <div class="pred-metric-item">
+                <span class="metric-label">Estimate method</span>
+                <span class="metric-val">Experimental formula</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Row 3: Microscopy Cell Detection (Proof of Concept) -->
+    <section class="glass-card panel-card section-full" id="microscopy-vision-panel">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2 class="panel-title">Automated Hemocytometer Microscopy Inspection</h2>
+          <span class="source-tag poc" id="vision-poc-tag">MICROSCOPY PROOF OF CONCEPT</span>
+        </div>
+        <span class="source-caption">YOLOv8 Nano detector trained on CIDACC Chlorella vulgaris microscopy dataset</span>
+      </div>
+
+      <div class="microscopy-layout">
+        <!-- Controls & Metrics Column -->
+        <div class="microscopy-controls">
+          <div class="form-group">
+            <label for="select-microscopy-sample" class="form-label">Validation Microscopy Sample</label>
+            <select class="form-control" id="select-microscopy-sample">
+              <option value="distinct_108">distinct_108.png — Distinct Cells (Medium Density)</option>
+              <option value="distinct_110">distinct_110.png — Distinct Cells (Low Density)</option>
+              <option value="distinct_114">distinct_114.png — Distinct Cells (Dispersed)</option>
+              <option value="distinct_130">distinct_130.png — Distinct Cells (Single Cells)</option>
+              <option value="clusters_107">clusters_107.png — Cell Clusters & Aggregates</option>
+              <option value="clusters_119">clusters_119.png — High-Density Aggregations</option>
+              <option value="clusters_200">clusters_200.png — Clustered Debris & Microalgae</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slider-conf-thresh" class="form-label">Detection Confidence Threshold: <span id="conf-thresh-val">0.25</span></label>
+            <input type="range" class="form-range" id="slider-conf-thresh" min="0.10" max="0.80" step="0.05" value="0.25">
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" id="btn-run-vision-detection">
+              <span>Execute Cell Detection</span>
+            </button>
+          </div>
+
+          <!-- Detection Count Results -->
+          <div class="vision-results-card" id="vision-results-container">
+            <h3 class="results-subtitle">Optical Cell Counting Analysis</h3>
+            <p class="source-caption" id="vision-status" role="status" aria-live="polite">Microscopy inference has not run.</p>
+
+            <div class="counter-grid">
+              <div class="counter-box class0-box">
+                <span class="counter-tag">CLASS 0 (CELLS)</span>
+                <span class="counter-number" id="count-class0">--</span>
+                <span class="counter-note">Predicted individual cell detections</span>
+              </div>
+              <div class="counter-box class1-box">
+                <span class="counter-tag">CLASS 1 (CLUSTERS/NOISE)</span>
+                <span class="counter-number" id="count-class1">--</span>
+                <span class="counter-note">Strictly excluded from cell counts</span>
+              </div>
+            </div>
+
+            <div class="ground-truth-comparison" id="gt-comparison-box">
+              <div class="comparison-row">
+                <span>Ground Truth Cell Count:</span>
+                <strong id="gt-cells">--</strong>
+              </div>
+              <div class="comparison-row">
+                <span>Counting Error (Δ):</span>
+                <strong id="count-error">--</strong>
+              </div>
+              <div class="comparison-row">
+                <span>Vision-derived culture density:</span>
+                <strong id="vision-density-calc">--</strong>
+              </div>
+            </div>
+
+            <div class="legend-box">
+              <div class="legend-item"><span class="legend-color cell-color"></span> Individual Chlorella Cell (Class 0)</div>
+              <div class="legend-item"><span class="legend-color cluster-color"></span> Cluster / Debris (Class 1, Excluded)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Image Viewer / Canvas Overlay -->
+        <div class="microscopy-viewport-wrapper">
+          <div class="viewport-toolbar">
+            <span class="toolbar-title" id="viewport-filename">distinct_108.png</span>
+            <div class="toolbar-toggles">
+              <label class="toggle-label">
+                <input type="checkbox" id="toggle-boxes" checked> Show Bounding Boxes
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="toggle-labels" checked> Show Class Labels
+              </label>
+            </div>
+          </div>
+
+          <div class="canvas-container" id="canvas-container">
+            <img id="microscopy-img" src="" alt="Microscopy Frame" class="hidden">
+            <canvas id="microscopy-canvas" width="640" height="640"></canvas>
+            <div class="canvas-loader hidden" id="canvas-loader">
+              <div class="spinner"></div>
+              <span>Processing image through YOLOv8n detector...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row 4: Diagnostic Alerts & Operational Recommendations -->
+    <div class="section-columns-2" id="alerts-recommendations-row">
+
+      <!-- Diagnostic Alerts Panel -->
+      <section class="glass-card panel-card" id="alerts-panel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2 class="panel-title">Operational Alerts & Discrepancies</h2>
+          </div>
+          <span class="source-caption">Simulated telemetry health rules; no live sensor-vision reconciliation</span>
+        </div>
+
+        <div class="alerts-list" id="alerts-list-container">
+          <p class="source-caption" id="alerts-loading">Loading simulated operating alerts…</p>
+        </div>
+      </section>
+
+      <!-- Operational Decision & Recommendations -->
+      <section class="glass-card panel-card" id="recommendations-panel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2 class="panel-title">Harvest & Sparging Advisory</h2>
+            <span class="source-tag experimental">EXPERIMENTAL ALGORITHMS</span>
+          </div>
+          <span class="source-caption">Experimental suggestions only; not validated control instructions</span>
+        </div>
+
+        <div class="recommendations-body">
+          <div class="rec-card" id="rec-harvest-card">
+            <div class="rec-top">
+              <span class="rec-title">Culture Dilution / Partial Harvest</span>
+              <span class="rec-badge readiness" id="rec-readiness-badge">76.7% READY</span>
+            </div>
+            <p class="rec-desc" id="rec-harvest-desc">
+              Experimental suggestion based on simulated dashboard values; density is illustrative and is not a measured culture value.
+            </p>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="harvest-progress-bar" style="width: 76.7%;"></div>
+            </div>
+          </div>
+
+          <div class="rec-grid-compact">
+            <div class="rec-compact-item">
+              <span class="compact-label">CO₂ Enrichment Sparging</span>
+              <strong class="compact-value" id="rec-co2-sparging">15 min ON / 45 min OFF (0.04% v/v)</strong>
+            </div>
+            <div class="rec-compact-item">
+              <span class="compact-label">Photoperiod Schedule</span>
+              <strong class="compact-value" id="rec-photoperiod">16h Light / 8h Dark Respiration</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Row 5: Historical Trends Charts -->
+    <section class="glass-card panel-card section-full" id="historical-trends-section">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2 class="panel-title">14-Day Microalgae Lifecycle Telemetry & Trajectories</h2>
+          <span class="source-tag simulated">SIMULATED REPLAY</span>
+        </div>
+        <span class="source-caption">Hard-coded illustrative series for dashboard display; not experimental measurements</span>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-container-card" id="chart-card-density">
+          <div class="chart-header">
+            <span class="chart-title">Cell Density Trajectory (×10⁶ cells/mL)</span>
+          </div>
+          <canvas id="chart-density-canvas" width="540" height="200"></canvas>
+        </div>
+
+        <div class="chart-container-card" id="chart-card-co2">
+          <div class="chart-header">
+            <span class="chart-title">Daily Carbon Dioxide Uptake (kg CO₂ / day)</span>
+          </div>
+          <canvas id="chart-co2-canvas" width="540" height="200"></canvas>
+        </div>
+
+        <div class="chart-container-card" id="chart-card-ph">
+          <div class="chart-header">
+            <span class="chart-title">Diurnal pH Modulation (Target: 7.4)</span>
+          </div>
+          <canvas id="chart-ph-canvas" width="540" height="200"></canvas>
+        </div>
+
+        <div class="chart-container-card" id="chart-card-temp">
+          <div class="chart-header">
+            <span class="chart-title">Water Temperature (°C)</span>
+          </div>
+          <canvas id="chart-temp-canvas" width="540" height="200"></canvas>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Application Footer -->
+  <footer class="app-footer" id="main-footer">
+    <div class="footer-left">
+      <span>Project 4Algae &bull; Liquid Tree Monitoring Prototype</span>
+      <span class="footer-sep">|</span>
+      <span>Vision: YOLOv8n (Phase 9C 20-epoch checkpoint) &bull; Inference device: CPU</span>
+    </div>
+    <div class="footer-right">
+      <span class="truth-pill">Simulated telemetry &bull; No live hardware connection</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+# Python virtual environments, caches, and test output
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+*.log
+*.tmp
+*.temp
+*.out
+*.err
+
+# Local editor and operating-system state
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets and machine-local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+secrets.*
+
+# Raw source data is retained locally; distribution rights are not established.
+/data/raw/
+
+# Derived observation tables are kept local until source-data redistribution
+# terms are verified. Recreate them from authorized inputs using src/.
+/data/processed/*.csv
+/data/processed/cidac/*.csv
+!/data/processed/cidac/phase9b_split_manifest.csv
+
+# Large microscopy images and generated label caches. Keep the small frozen
+# split manifest, split metadata, dataset summary, and dataset configuration.
+/data/processed/cidac/phase9c_yolo/images/
+/data/processed/cidac/phase9c_yolo/labels/
+/data/processed/cidac/qualitative/
+*.cache
+
+# Model binaries and generated training runs remain local pending provenance
+# and redistribution review. Evaluation reports are retained under reports/.
+/models/*.pt
+/models/**/*.pt
+/models/phase9c_yolo/
+
+# Temporary audit scripts and outputs created during local work
+/_phase9*
+/phase9_audit_output.json
