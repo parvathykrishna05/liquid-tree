@@ -1,4 +1,6 @@
-# AI-Driven Autonomous Liquid Tree Monitoring and Bio-Resource Optimization System
+# liquid-tree
+
+## AI-Driven Autonomous Liquid Tree Monitoring and Bio-Resource Optimization System
 
 A B.Tech project prototype exploring microalgae growth analysis, microscopy-based
 cell detection, and a local dashboard for a conceptual urban photobioreactor
