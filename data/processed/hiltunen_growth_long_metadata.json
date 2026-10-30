@@ -1,0 +1,75 @@
+{
+  "source_workbook": "data/raw/hiltunen/hiltunen_etal_chlorella_growth_biochem_data.xlsx",
+  "source_sheet": "data",
+  "source_dimensions_rows_columns": [
+    61,
+    133
+  ],
+  "processed_dimensions_rows_columns": [
+    1037,
+    8
+  ],
+  "transformation": "Reshaped paired celldens_dN and pH_dN columns to one row per source experiment/funnel and detected day N. Metadata labels were retained unchanged.",
+  "columns_retained": [
+    "Exp",
+    "Funnel#",
+    "Medium",
+    "CO2",
+    "Light",
+    "Day",
+    "Cell_Density",
+    "pH"
+  ],
+  "source_cell_density_columns": {
+    "0": "celldens_d0",
+    "1": "celldens_d1",
+    "2": "celldens_d2",
+    "3": "celldens_d3",
+    "4": "celldens_d4",
+    "5": "celldens_d5",
+    "6": "celldens_d6",
+    "7": "celldens_d7",
+    "8": "celldens_d8",
+    "9": "celldens_d9",
+    "10": "celldens_d10",
+    "11": "celldens_d11",
+    "12": "celldens_d12",
+    "13": "celldens_d13",
+    "14": "celldens_d14",
+    "15": "celldens_d15",
+    "16": "celldens_d16"
+  },
+  "source_ph_columns": {
+    "0": "pH_d0",
+    "1": "pH_d1",
+    "2": "pH_d2",
+    "3": "pH_d3",
+    "4": "pH_d4",
+    "5": "pH_d5",
+    "6": "pH_d6",
+    "7": "pH_d7",
+    "8": "pH_d8",
+    "9": "pH_d9",
+    "10": "pH_d10",
+    "11": "pH_d11",
+    "12": "pH_d12",
+    "13": "pH_d13",
+    "14": "pH_d14",
+    "15": "pH_d15",
+    "16": "pH_d16"
+  },
+  "units": {
+    "Cell_Density": "10^6 cells/mL, as documented in the workbook info sheet",
+    "pH": "pH, as documented in the workbook info sheet",
+    "Day": "Integer day index parsed from source column suffix; day 0 is the source d0 measurement.",
+    "CO2": "Original categorical treatment label; no numeric conversion performed."
+  },
+  "missing_value_handling": "Missing daily measurements were preserved as null/NaN. No imputation, filling, interpolation, zero replacement, or observation removal was performed.",
+  "date_time_transformation": "None; the source provides integer day indices, not calendar timestamps.",
+  "assumptions": [
+    "Exp and Funnel# together identify each source culture record; uniqueness is validated.",
+    "Matching celldens_dN and pH_dN suffixes refer to the same source day."
+  ],
+  "processed_at_utc": "2026-10-02T16:14:24.465791+00:00",
+  "raw_workbook_modified": false
+}

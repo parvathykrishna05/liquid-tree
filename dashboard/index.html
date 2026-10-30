@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Liquid Tree AI - Photobioreactor Monitoring Prototype</title>
   <meta name="description" content="Microscopy monitoring, simulated telemetry, and experimental formula-based growth estimates for an urban Chlorella vulgaris Liquid Tree dashboard.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -29,7 +26,7 @@
     <div class="nav-status">
       <div class="status-chip optimal" id="reactor-status-chip">
         <span class="pulse-dot"></span>
-        <span id="chip-status-text">DEMO STATUS: NOMINAL</span>
+        <span id="chip-status-text" aria-live="polite">SIMULATED DATA · CONNECTING</span>
       </div>
       <div class="telemetry-badge" id="telemetry-badge" title="Telemetry data source">
         <span class="badge-tag">DATA SOURCE</span>
@@ -44,11 +41,20 @@
     </div>
   </header>
 
+  <nav class="section-switcher" aria-label="Dashboard sections" role="tablist">
+    <button class="section-tab active" type="button" role="tab" aria-selected="true" aria-controls="dashboard-container" data-section-button="overview">Overview</button>
+    <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="dashboard-container" data-section-button="growth">Growth estimate</button>
+    <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="dashboard-container" data-section-button="microscopy">Microscopy</button>
+    <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="dashboard-container" data-section-button="operations">Operations</button>
+    <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="dashboard-container" data-section-button="mobile">Mobile unit</button>
+    <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="dashboard-container" data-section-button="trends">Historical trends</button>
+  </nav>
+
   <!-- Main Application Container -->
   <main class="dashboard-grid" id="dashboard-container">
 
     <!-- Row 1: Reactor Overview Cards -->
-    <section class="section-full overview-cards-grid" id="reactor-overview-section">
+    <section class="section-full overview-cards-grid" id="reactor-overview-section" data-dashboard-view="overview">
       <div class="glass-card stat-card" id="card-cell-density">
         <div class="card-header-compact">
           <span class="stat-label">CULTURE DENSITY</span>
@@ -114,7 +120,7 @@
     <div class="section-columns-2" id="telemetry-prediction-row">
 
       <!-- Sensor Telemetry Panel -->
-      <section class="glass-card panel-card" id="sensor-telemetry-panel">
+      <section class="glass-card panel-card" id="sensor-telemetry-panel" data-dashboard-view="overview">
         <div class="panel-header">
           <div class="panel-title-group">
             <h2 class="panel-title">Bioreactor Environmental Telemetry</h2>
@@ -206,7 +212,7 @@
       </section>
 
       <!-- Predictive Biomass Engine Panel -->
-      <section class="glass-card panel-card" id="growth-prediction-panel">
+      <section class="glass-card panel-card" id="growth-prediction-panel" data-dashboard-view="growth">
         <div class="panel-header">
           <div class="panel-title-group">
             <h2 class="panel-title">Experimental Formula-Based Growth Estimate</h2>
@@ -233,11 +239,15 @@
               <label for="input-co2" class="form-label">CO₂ Inflow (ppm)</label>
               <input type="number" step="25" class="form-control" id="input-co2" value="412" min="300" max="2000">
             </div>
+            <div class="form-group">
+              <label for="input-culture-day" class="form-label">Batch Day</label>
+              <input type="number" step="1" class="form-control" id="input-culture-day" value="8" min="1" max="25">
+            </div>
           </div>
 
           <div class="form-actions">
             <button class="btn btn-primary" id="btn-run-prediction" type="button">
-              <span>Compute Formula-Based Estimate</span>
+              <span>Run estimate</span>
             </button>
           </div>
         </form>
@@ -267,13 +277,63 @@
                 <span class="metric-val">Experimental formula</span>
               </div>
             </div>
+
+            <!-- Early-Warning Culture Crash Detector Card -->
+            <div class="crash-risk-card" id="crash-risk-card">
+              <div class="crash-risk-header">
+                <div class="risk-title-group">
+                  <span class="risk-badge-icon">⚠️</span>
+                  <span class="risk-card-title">Early-Warning Culture Crash Detector</span>
+                </div>
+                <span class="risk-status-pill low" id="risk-status-pill">NOMINAL (14.2%)</span>
+              </div>
+              <div class="risk-meter-track">
+                <div class="risk-meter-fill" id="risk-meter-fill" style="width: 14.2%;"></div>
+              </div>
+              <div class="risk-metrics-row">
+                <span class="risk-sub">Stability Window: <strong id="risk-stability-hrs">120h</strong></span>
+                <span class="risk-sub">Dominant Stressor: <strong id="risk-top-stressor">None</strong></span>
+              </div>
+              <p class="risk-advisory" id="risk-advisory-text">
+                NOMINAL: Culture is in healthy exponential growth. Photobioreactor conditions are balanced.
+              </p>
+            </div>
+
+            <!-- Biophysical Grey-Box Kinetics Card -->
+            <div class="grey-box-card" id="grey-box-card">
+              <div class="grey-box-header">
+                <span class="grey-box-title">Biophysical Grey-Box Kinetics</span>
+                <span class="grey-box-badge">MONOD + BEER-LAMBERT</span>
+              </div>
+              <div class="grey-box-metrics-grid">
+                <div class="grey-box-metric">
+                  <span class="gb-label">Monod Growth (μ)</span>
+                  <span class="gb-val" id="gb-monod-mu">--</span>
+                </div>
+                <div class="grey-box-metric">
+                  <span class="gb-label">Effective Light (I<sub>eff</sub>)</span>
+                  <span class="gb-val" id="gb-light-eff">--</span>
+                </div>
+                <div class="grey-box-metric">
+                  <span class="gb-label">First-Principles N<sub>t+1</sub></span>
+                  <span class="gb-val" id="gb-analytical-density">--</span>
+                </div>
+                <div class="grey-box-metric">
+                  <span class="gb-label">Grey-Box Residual (Δ)</span>
+                  <span class="gb-val" id="gb-residual">--</span>
+                </div>
+              </div>
+              <p class="grey-box-caption">
+                Compares empirical prediction against analytical Monod substrate saturation and Beer-Lambert self-shading attenuation.
+              </p>
+            </div>
           </div>
         </div>
       </section>
     </div>
 
     <!-- Row 3: Microscopy Cell Detection (Proof of Concept) -->
-    <section class="glass-card panel-card section-full" id="microscopy-vision-panel">
+    <section class="glass-card panel-card section-full" id="microscopy-vision-panel" data-dashboard-view="microscopy">
       <div class="panel-header">
         <div class="panel-title-group">
           <h2 class="panel-title">Automated Hemocytometer Microscopy Inspection</h2>
@@ -305,7 +365,7 @@
 
           <div class="form-actions">
             <button class="btn btn-primary" id="btn-run-vision-detection">
-              <span>Execute Cell Detection</span>
+              <span>Run cell detection</span>
             </button>
           </div>
 
@@ -342,6 +402,55 @@
               </div>
             </div>
 
+            <!-- Cell-to-Biomass Geometric Volume Estimator Card -->
+            <div class="biomass-volume-card" id="biomass-volume-card">
+              <div class="biomass-card-header">
+                <span class="biomass-card-title">Cellular Biovolume & Dry Mass Proxy</span>
+                <span class="biomass-badge">PROLATE SPHEROID</span>
+              </div>
+              <div class="biomass-grid-2x2">
+                <div class="biomass-stat-item">
+                  <span class="bio-stat-label">Total Biovolume</span>
+                  <span class="bio-stat-value" id="stat-total-biovolume">--</span>
+                  <span class="bio-stat-unit">μm³ / FOV</span>
+                </div>
+                <div class="biomass-stat-item">
+                  <span class="bio-stat-label">Mean Cell Diam.</span>
+                  <span class="bio-stat-value" id="stat-mean-diameter">--</span>
+                  <span class="bio-stat-unit">μm (Equiv. Sphere)</span>
+                </div>
+                <div class="biomass-stat-item">
+                  <span class="bio-stat-label">Mean Cell Vol.</span>
+                  <span class="bio-stat-value" id="stat-mean-volume">--</span>
+                  <span class="bio-stat-unit">μm³ / cell</span>
+                </div>
+                <div class="biomass-stat-item">
+                  <span class="bio-stat-label">Est. Dry Mass</span>
+                  <span class="bio-stat-value" id="stat-total-dry-mass">--</span>
+                  <span class="bio-stat-unit">pg (at 27% dry wt)</span>
+                </div>
+              </div>
+              <p class="biomass-caption">
+                Direct integration of bounding box geometries (0.3125 μm/px) bridging YOLO detections to physical biomass biovolume.
+              </p>
+            </div>
+
+            <!-- Uncertainty Quantification & Active Learning Triage Card -->
+            <div class="triage-card" id="triage-card">
+              <div class="triage-header">
+                <span class="triage-title">Uncertainty & Optical Triage</span>
+                <span class="triage-pill verified" id="triage-status-pill">VERIFIED (94.0%)</span>
+              </div>
+              <div class="triage-metrics-row">
+                <span class="triage-sub">Mean Conf.: <strong id="triage-mean-conf">--</strong></span>
+                <span class="triage-sub">Borderline: <strong id="triage-borderline-count">--</strong></span>
+                <span class="triage-sub">Debris Noise: <strong id="triage-clump-pct">--</strong></span>
+              </div>
+              <p class="triage-advisory" id="triage-advisory-text">
+                Waiting for microscopy inference…
+              </p>
+            </div>
+
             <div class="legend-box">
               <div class="legend-item"><span class="legend-color cell-color"></span> Individual Chlorella Cell (Class 0)</div>
               <div class="legend-item"><span class="legend-color cluster-color"></span> Cluster / Debris (Class 1, Excluded)</div>
@@ -366,6 +475,7 @@
           <div class="canvas-container" id="canvas-container">
             <img id="microscopy-img" src="" alt="Microscopy Frame" class="hidden">
             <canvas id="microscopy-canvas" width="640" height="640"></canvas>
+            <div class="microscopy-empty-state hidden" id="microscopy-empty-state" role="status"></div>
             <div class="canvas-loader hidden" id="canvas-loader">
               <div class="spinner"></div>
               <span>Processing image through YOLOv8n detector...</span>
@@ -379,7 +489,7 @@
     <div class="section-columns-2" id="alerts-recommendations-row">
 
       <!-- Diagnostic Alerts Panel -->
-      <section class="glass-card panel-card" id="alerts-panel">
+      <section class="glass-card panel-card" id="alerts-panel" data-dashboard-view="operations">
         <div class="panel-header">
           <div class="panel-title-group">
             <h2 class="panel-title">Operational Alerts & Discrepancies</h2>
@@ -393,7 +503,7 @@
       </section>
 
       <!-- Operational Decision & Recommendations -->
-      <section class="glass-card panel-card" id="recommendations-panel">
+      <section class="glass-card panel-card" id="recommendations-panel" data-dashboard-view="operations">
         <div class="panel-header">
           <div class="panel-title-group">
             <h2 class="panel-title">Harvest & Sparging Advisory</h2>
@@ -426,12 +536,194 @@
               <strong class="compact-value" id="rec-photoperiod">16h Light / 8h Dark Respiration</strong>
             </div>
           </div>
+
+          <!-- Autonomous Cyber-Physical Actuator Hub -->
+          <div class="actuator-hub-card" id="actuator-hub-card">
+            <div class="actuator-hub-header">
+              <div class="hub-title-group">
+                <span class="hub-badge-icon">⚡</span>
+                <span class="hub-title">Actuation simulator</span>
+              </div>
+              <span class="source-caption">Simulation only · no connected hardware</span>
+              <button class="btn btn-secondary btn-sm" id="btn-trigger-actuation" type="button">
+                <span>Simulate control response</span>
+              </button>
+            </div>
+
+            <div class="actuators-grid">
+              <!-- Valve 1: CO2 Solenoid -->
+              <div class="actuator-box" id="box-actuator-co2">
+                <div class="act-top">
+                  <span class="act-name">CO₂ Solenoid (SV-01)</span>
+                  <span class="act-pill standby" id="pill-co2-valve">STANDBY</span>
+                </div>
+                <div class="act-body">
+                  <span class="act-param">Pulse: <strong id="val-co2-pulse">0.0s</strong></span>
+                  <span class="act-param">Target pH: <strong id="val-co2-target-ph">7.40</strong></span>
+                </div>
+                <span class="act-note" id="note-co2-action">Predictive dissolution regulation active</span>
+              </div>
+
+              <!-- Valve 2: Adaptive LED Driver -->
+              <div class="actuator-box" id="box-actuator-led">
+                <div class="act-top">
+                  <span class="act-name">Adaptive LED (PWM-01)</span>
+                  <span class="act-pill active" id="pill-led-driver">85% POWER</span>
+                </div>
+                <div class="act-body">
+                  <span class="act-param">PPFD: <strong id="val-led-ppfd">260 μmol</strong></span>
+                  <span class="act-param">Core Pen.: <strong id="val-led-penetration">49.7%</strong></span>
+                </div>
+                <span class="act-note" id="note-led-spectrum">4:1 Red:Blue (Beer-Lambert Depth Compensation)</span>
+              </div>
+
+              <!-- Valve 3: Dilution Harvest Valves -->
+              <div class="actuator-box" id="box-actuator-harvest">
+                <div class="act-top">
+                  <span class="act-name">Auto-Harvest (V-01/02)</span>
+                  <span class="act-pill standby" id="pill-harvest-valve">STANDBY</span>
+                </div>
+                <div class="act-body">
+                  <span class="act-param">Drain: <strong id="val-harvest-vol">0 L</strong></span>
+                  <span class="act-param">Reset N<sub>t</sub>: <strong id="val-harvest-reset">18.4M</strong></span>
+                </div>
+                <span class="act-note" id="note-harvest-desc">Threshold trigger at 24.0M cells/mL</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>
 
+    <!-- Row 4.5: Autonomous Mobile Liquid Tree (AMR) Dispatch Hub -->
+    <section class="glass-card panel-card section-full" id="mobile-amr-section" data-dashboard-view="mobile">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2 class="panel-title">Autonomous Mobile Liquid Tree (AMR Pod) — Indoor Air Quality Dispatch</h2>
+          <span class="source-tag experimental">AMR ROBOTICS PROTOTYPE</span>
+        </div>
+        <span class="source-caption">LiDAR-guided 60L Chlorella column dispatched to corporate zones based on real-time CO₂ spikes</span>
+      </div>
+
+      <div class="amr-layout-grid">
+        <!-- Building Zones Selection -->
+        <div class="amr-zones-panel">
+          <h3 class="amr-panel-subtitle">Corporate Floorplan Zones (IoT Environmental Mesh)</h3>
+          <div class="zone-cards-list">
+            <div class="zone-card active" data-zone="boardroom_a" id="zone-card-boardroom">
+              <div class="zone-top">
+                <span class="zone-title">Executive Boardroom A</span>
+                <span class="zone-badge urgent">1,650 ppm CO₂ (URGENT)</span>
+              </div>
+              <div class="zone-meta">
+                <span>Occupancy: <strong>8 people</strong></span>
+                <span>Distance: <strong>35 m</strong></span>
+                <span>Status: <strong>Fatigue Risk</strong></span>
+              </div>
+            </div>
+
+            <div class="zone-card" data-zone="conference_room_b" id="zone-card-conf-b">
+              <div class="zone-top">
+                <span class="zone-title">Team Conference Room B</span>
+                <span class="zone-badge moderate">1,050 ppm CO₂ (ELEVATED)</span>
+              </div>
+              <div class="zone-meta">
+                <span>Occupancy: <strong>3 people</strong></span>
+                <span>Distance: <strong>18 m</strong></span>
+                <span>Status: <strong>Moderate</strong></span>
+              </div>
+            </div>
+
+            <div class="zone-card" data-zone="open_workspace" id="zone-card-open">
+              <div class="zone-top">
+                <span class="zone-title">Engineering Open Desks</span>
+                <span class="zone-badge nominal">640 ppm CO₂ (NORMAL)</span>
+              </div>
+              <div class="zone-meta">
+                <span>Occupancy: <strong>22 people</strong></span>
+                <span>Distance: <strong>45 m</strong></span>
+                <span>Status: <strong>Optimal</strong></span>
+              </div>
+            </div>
+
+            <div class="zone-card" data-zone="docking_station" id="zone-card-dock">
+              <div class="zone-top">
+                <span class="zone-title">Autonomous Mother Base Dock</span>
+                <span class="zone-badge dock">BASE (420 ppm)</span>
+              </div>
+              <div class="zone-meta">
+                <span>Port: <strong>Inductive Charger + Harvest Tank</strong></span>
+                <span>Status: <strong>Standby</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="amr-actions">
+            <button class="btn btn-primary" id="btn-dispatch-amr" type="button">
+              <span>Simulate mobile unit dispatch</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Robot Telemetry & Mission Card -->
+        <div class="amr-robot-panel">
+          <div class="robot-status-header">
+            <div class="robot-id-group">
+              <span class="robot-avatar">🤖🌿</span>
+              <div>
+                <h3 class="robot-id-title" id="amr-robot-id">AMR-LT-01 (AeroTree Pod)</h3>
+                <span class="robot-spec-sub">60L Chlorella vulgaris Column | Mecanum Drive + 2D LiDAR SLAM</span>
+              </div>
+            </div>
+            <span class="robot-pill active" id="amr-mission-pill">MISSION DISPATCHED</span>
+          </div>
+
+          <div class="robot-stats-grid">
+            <div class="r-stat-box">
+              <span class="r-stat-label">Active Target Zone</span>
+              <strong class="r-stat-val" id="amr-target-zone">Executive Boardroom A</strong>
+            </div>
+            <div class="r-stat-box">
+              <span class="r-stat-label">Battery Charge</span>
+              <strong class="r-stat-val" id="amr-battery-pct">82%</strong>
+            </div>
+            <div class="r-stat-box">
+              <span class="r-stat-label">Transit ETA</span>
+              <strong class="r-stat-val" id="amr-transit-eta">0.7 min</strong>
+            </div>
+            <div class="r-stat-box">
+              <span class="r-stat-label">Est. Scrub Time</span>
+              <strong class="r-stat-val" id="amr-scrub-time">39.6 min</strong>
+            </div>
+            <div class="r-stat-box">
+              <span class="r-stat-label">Target IAQ Remediation</span>
+              <strong class="r-stat-val" id="amr-target-co2">1,650 → 750 ppm</strong>
+            </div>
+            <div class="r-stat-box">
+              <span class="r-stat-label">Photosynthetic O₂ Output</span>
+              <strong class="r-stat-val" id="amr-o2-produced">+88.5 g O₂</strong>
+            </div>
+          </div>
+
+          <div class="amr-live-progress-card">
+            <div class="progress-info-row">
+              <span class="prog-label">Real-Time Monod Bio-Scrubbing Progress</span>
+              <span class="prog-pct" id="amr-scrub-pct">In Transit to Room…</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="amr-progress-bar" style="width: 25%;"></div>
+            </div>
+          </div>
+
+          <p class="amr-mission-advisory" id="amr-advisory-text">
+            Elevated CO2 detected in Executive Boardroom A (1,650 ppm). AMR Liquid Tree dispatched. Active Monod scrubbing will remediate IAQ to 750 ppm in ~39 min, generating 88.5g of fresh O2.
+          </p>
+        </div>
+      </div>
+    </section>
+
     <!-- Row 5: Historical Trends Charts -->
-    <section class="glass-card panel-card section-full" id="historical-trends-section">
+    <section class="glass-card panel-card section-full" id="historical-trends-section" data-dashboard-view="trends">
       <div class="panel-header">
         <div class="panel-title-group">
           <h2 class="panel-title">14-Day Microalgae Lifecycle Telemetry & Trajectories</h2>
@@ -445,28 +737,32 @@
           <div class="chart-header">
             <span class="chart-title">Cell Density Trajectory (×10⁶ cells/mL)</span>
           </div>
-          <canvas id="chart-density-canvas" width="540" height="200"></canvas>
+          <canvas id="chart-density-canvas" width="540" height="200" role="img" aria-label="Illustrative 14-day cell density trend"></canvas>
+          <p class="chart-empty-state hidden" role="status">Loading chart data...</p>
         </div>
 
         <div class="chart-container-card" id="chart-card-co2">
           <div class="chart-header">
             <span class="chart-title">Daily Carbon Dioxide Uptake (kg CO₂ / day)</span>
           </div>
-          <canvas id="chart-co2-canvas" width="540" height="200"></canvas>
+          <canvas id="chart-co2-canvas" width="540" height="200" role="img" aria-label="Illustrative daily carbon dioxide uptake trend"></canvas>
+          <p class="chart-empty-state hidden" role="status">Loading chart data...</p>
         </div>
 
         <div class="chart-container-card" id="chart-card-ph">
           <div class="chart-header">
             <span class="chart-title">Diurnal pH Modulation (Target: 7.4)</span>
           </div>
-          <canvas id="chart-ph-canvas" width="540" height="200"></canvas>
+          <canvas id="chart-ph-canvas" width="540" height="200" role="img" aria-label="Illustrative culture pH trend"></canvas>
+          <p class="chart-empty-state hidden" role="status">Loading chart data...</p>
         </div>
 
         <div class="chart-container-card" id="chart-card-temp">
           <div class="chart-header">
             <span class="chart-title">Water Temperature (°C)</span>
           </div>
-          <canvas id="chart-temp-canvas" width="540" height="200"></canvas>
+          <canvas id="chart-temp-canvas" width="540" height="200" role="img" aria-label="Illustrative water temperature trend"></canvas>
+          <p class="chart-empty-state hidden" role="status">Loading chart data...</p>
         </div>
       </div>
     </section>

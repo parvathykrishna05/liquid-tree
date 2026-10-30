@@ -1,0 +1,56 @@
+{
+  "created_at_utc": "2026-10-02T16:37:18.840416+00:00",
+  "candidate_inputs": {
+    "basic": "data/processed/hiltunen_next_day_density_basic.csv",
+    "ph": "data/processed/hiltunen_next_day_density_ph.csv"
+  },
+  "sample_counts": {
+    "basic": 689,
+    "ph": 689
+  },
+  "culture_count": 61,
+  "experiment_count": 4,
+  "target": "Target_Cell_Density_Next_Day",
+  "feature_sets": {
+    "basic": [
+      "Current_Day",
+      "Current_Cell_Density",
+      "Medium",
+      "CO2",
+      "Light"
+    ],
+    "ph": [
+      "Current_Day",
+      "Current_Cell_Density",
+      "Current_pH",
+      "Medium",
+      "CO2",
+      "Light"
+    ]
+  },
+  "excluded_predictors": [
+    "Exp",
+    "Funnel#"
+  ],
+  "evaluation_protocols": {
+    "GroupKFold_Culture_5": "Five non-overlapping folds grouped by Exp + Funnel#. GroupKFold uses no shuffling.",
+    "LeaveOneExperimentOut": "Leave one Exp value out per fold; four folds total; exploratory due to only four experiments."
+  },
+  "metrics": "Fold-level MAE, RMSE, and R2; summary MAE/RMSE/R2 are unweighted fold means with sample standard deviations. Pooled metrics aggregate all out-of-fold predictions.",
+  "preprocessing": "OneHotEncoder and numeric scaling (Linear Regression only) are inside sklearn Pipelines and fit separately on each training fold. No imputation was needed because candidate modeling fields contain no missing values.",
+  "models": {
+    "Persistence": "Predict Target_Cell_Density_Next_Day as Current_Cell_Density.",
+    "Linear Regression": "LinearRegression with StandardScaler for numeric features and one-hot encoded categories.",
+    "Random Forest": "100 trees, random_state=42, n_jobs=-1; remaining sklearn defaults."
+  },
+  "xgboost_available": false,
+  "xgboost_note": "Evaluated only if already installed; no package installation is attempted.",
+  "random_state": 42,
+  "hyperparameter_tuning": false,
+  "random_row_split_used": false,
+  "model_artifacts_saved": false,
+  "software": {
+    "pandas": "3.0.6",
+    "scikit_learn": "1.9.1"
+  }
+}

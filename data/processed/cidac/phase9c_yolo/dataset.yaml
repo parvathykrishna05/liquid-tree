@@ -1,0 +1,9 @@
+# Ultralytics YOLO dataset configuration for CIDACC Chlorella vulgaris
+path: C:/4algae/data/processed/cidac/phase9c_yolo
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: chlorella_cell
+  1: cluster_noise

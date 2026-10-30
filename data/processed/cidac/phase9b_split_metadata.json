@@ -1,0 +1,17 @@
+{
+  "train": 438,
+  "val": 93,
+  "test": 95,
+  "seed": 42,
+  "ratios": {
+    "train": 0.7,
+    "val": 0.15,
+    "test": 0.15
+  },
+  "stratified_by": [
+    "subset",
+    "has_class1"
+  ],
+  "excluded_not_assigned": true,
+  "limitation": "628 images, no acquisition/session metadata; image-level split only; visually related frames cannot be grouped."
+}

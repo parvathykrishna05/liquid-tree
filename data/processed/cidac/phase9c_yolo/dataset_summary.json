@@ -1,0 +1,44 @@
+{
+  "splits": {
+    "train": {
+      "images": 438,
+      "class0": 3961,
+      "class1": 131,
+      "total_annotations": 4092
+    },
+    "val": {
+      "images": 93,
+      "class0": 882,
+      "class1": 26,
+      "total_annotations": 908
+    },
+    "test": {
+      "images": 95,
+      "class0": 965,
+      "class1": 26,
+      "total_annotations": 991
+    }
+  },
+  "missing_pairs": [],
+  "malformed_labels": [],
+  "out_of_bounds_coords": [],
+  "id_collisions": [],
+  "blank_mask_cases_handled": [
+    "distinct_174",
+    "distinct_303",
+    "distinct_310",
+    "distinct_314",
+    "distinct_320",
+    "distinct_321",
+    "distinct_429",
+    "distinct_432",
+    "distinct_507",
+    "distinct_533",
+    "distinct_616",
+    "distinct_627",
+    "distinct_86"
+  ],
+  "dataset_yaml_path": "C:\\4algae\\data/processed/cidac/phase9c_yolo\\dataset.yaml",
+  "output_dir": "C:\\4algae\\data/processed/cidac/phase9c_yolo",
+  "summary_path": "C:\\4algae\\data/processed/cidac/phase9c_yolo\\dataset_summary.json"
+}

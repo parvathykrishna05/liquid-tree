@@ -1,0 +1,79 @@
+{
+  "usable_images": 626,
+  "excluded_images": [
+    "distinct/335",
+    "distinct/515"
+  ],
+  "blank_mask_images_retained_for_detection": [
+    "distinct/86",
+    "distinct/174",
+    "distinct/303",
+    "distinct/310",
+    "distinct/314",
+    "distinct/320",
+    "distinct/321",
+    "distinct/429",
+    "distinct/432",
+    "distinct/507",
+    "distinct/533",
+    "distinct/616",
+    "distinct/627"
+  ],
+  "class0_annotations": 5808,
+  "class1_annotations": 183,
+  "class0_per_image": {
+    "min": 0,
+    "p25": 3.0,
+    "median": 5.0,
+    "p75": 9.0,
+    "p90": 22.5,
+    "max": 107,
+    "mean": 9.277955271565496
+  },
+  "class1_per_image": {
+    "min": 0,
+    "p25": 0.0,
+    "median": 0.0,
+    "p75": 0.0,
+    "p90": 1.0,
+    "max": 7,
+    "mean": 0.29233226837060705
+  },
+  "images_with_zero_class0": 4,
+  "images_with_class1": 130,
+  "by_subset": {
+    "distinct": {
+      "images": 462,
+      "class0": 2732,
+      "class1": 39,
+      "class1_images": 36
+    },
+    "clusters": {
+      "images": 164,
+      "class0": 3076,
+      "class1": 144,
+      "class1_images": 94
+    }
+  },
+  "intensity": {
+    "mean_min": 89.48136901855469,
+    "mean_median": 92.11603546142578,
+    "mean_max": 199.43496704101562,
+    "n_bright_regime_mean_ge_150": 47,
+    "std_median": 3.3139712810516357
+  },
+  "cell_vs_background_delta": {
+    "mean": -15.847588659811848,
+    "median": -14.065540313720703,
+    "min": -82.8657455444336,
+    "max": 35.604576110839844,
+    "n_sampled_boxes": 806
+  },
+  "gt_box_area_px": {
+    "class0_median": 268.2500000000007,
+    "class0_p10": 101.25,
+    "class0_p90": 526.8250000000008,
+    "class1_median": 1979.9999999999968,
+    "class1_p90": 8238.200000000008
+  }
+}

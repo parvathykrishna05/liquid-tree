@@ -1,0 +1,106 @@
+{
+  "grid_results": [
+    {
+      "method": "otsu",
+      "config_idx": 0,
+      "params": "{\"cell_max_area\": 1000, \"cluster_max_area\": 8000, \"max_cell_side\": 64, \"max_cluster_side\": 400, \"min_area\": 25}",
+      "val_mae": 19.096774193548388,
+      "val_rmse": 36.95449104780298,
+      "val_bias": 15.956989247311828,
+      "val_f1": 0.1828817733990148
+    },
+    {
+      "method": "otsu",
+      "config_idx": 1,
+      "params": "{\"cell_max_area\": 1000, \"cluster_max_area\": 8000, \"max_cell_side\": 64, \"max_cluster_side\": 400, \"min_area\": 45}",
+      "val_mae": 15.720430107526882,
+      "val_rmse": 29.411430738141863,
+      "val_bias": 10.494623655913978,
+      "val_f1": 0.2145985401459854
+    },
+    {
+      "method": "tophat",
+      "config_idx": 0,
+      "params": "{\"bg_size\": 25, \"cell_max_area\": 1000, \"cluster_max_area\": 8000, \"max_cell_side\": 64, \"max_cluster_side\": 400, \"min_area\": 25}",
+      "val_mae": 35.956989247311824,
+      "val_rmse": 47.225380455214804,
+      "val_bias": 32.516129032258064,
+      "val_f1": 0.09440267335004177
+    },
+    {
+      "method": "tophat",
+      "config_idx": 1,
+      "params": "{\"bg_size\": 35, \"cell_max_area\": 1000, \"cluster_max_area\": 8000, \"max_cell_side\": 64, \"max_cluster_side\": 400, \"min_area\": 25}",
+      "val_mae": 31.06451612903226,
+      "val_rmse": 39.73988002644357,
+      "val_bias": 27.903225806451612,
+      "val_f1": 0.10094058270245468
+    },
+    {
+      "method": "log",
+      "config_idx": 0,
+      "params": "{\"cell_max_area\": 1000, \"cluster_max_area\": 8000, \"k\": 2.0, \"max_cell_side\": 64, \"max_cluster_side\": 400, \"min_area\": 25, \"sigma\": 4}",
+      "val_mae": 31.49462365591398,
+      "val_rmse": 38.78019115226808,
+      "val_bias": 29.903225806451612,
+      "val_f1": 0.008360836083608362
+    },
+    {
+      "method": "log",
+      "config_idx": 1,
+      "params": "{\"cell_max_area\": 1000, \"cluster_max_area\": 8000, \"k\": 2.5, \"max_cell_side\": 64, \"max_cluster_side\": 400, \"min_area\": 25, \"sigma\": 4}",
+      "val_mae": 10.946236559139784,
+      "val_rmse": 13.218592315208866,
+      "val_bias": 7.956989247311828,
+      "val_f1": 0.012779552715654952
+    },
+    {
+      "method": "log",
+      "config_idx": 2,
+      "params": "{\"cell_max_area\": 1000, \"cluster_max_area\": 8000, \"k\": 2.0, \"max_cell_side\": 64, \"max_cluster_side\": 400, \"min_area\": 25, \"sigma\": 5}",
+      "val_mae": 35.053763440860216,
+      "val_rmse": 43.01287629166085,
+      "val_bias": 31.311827956989248,
+      "val_f1": 0.0012831479897348161
+    },
+    {
+      "method": "log",
+      "config_idx": 3,
+      "params": "{\"cell_max_area\": 1000, \"cluster_max_area\": 8000, \"k\": 2.5, \"max_cell_side\": 64, \"max_cluster_side\": 400, \"min_area\": 25, \"sigma\": 5}",
+      "val_mae": 13.473118279569892,
+      "val_rmse": 16.458811412683467,
+      "val_bias": 8.225806451612904,
+      "val_f1": 0.004744958481613286
+    },
+    {
+      "method": "log",
+      "config_idx": 4,
+      "params": "{\"cell_max_area\": 1000, \"cluster_max_area\": 8000, \"k\": 2.0, \"max_cell_side\": 64, \"max_cluster_side\": 400, \"min_area\": 25, \"sigma\": 6}",
+      "val_mae": 27.35483870967742,
+      "val_rmse": 34.82984753871157,
+      "val_bias": 22.774193548387096,
+      "val_f1": 0.001545595054095827
+    },
+    {
+      "method": "log",
+      "config_idx": 5,
+      "params": "{\"cell_max_area\": 1000, \"cluster_max_area\": 8000, \"k\": 2.5, \"max_cell_side\": 64, \"max_cluster_side\": 400, \"min_area\": 25, \"sigma\": 6}",
+      "val_mae": 13.795698924731182,
+      "val_rmse": 16.837937196469703,
+      "val_bias": 7.602150537634409,
+      "val_f1": 0.0016187778227438284
+    }
+  ],
+  "best_method": "log",
+  "best_config_idx": 1,
+  "best_params": {
+    "cell_max_area": 1000,
+    "cluster_max_area": 8000,
+    "k": 2.5,
+    "max_cell_side": 64,
+    "max_cluster_side": 400,
+    "min_area": 25,
+    "sigma": 4
+  },
+  "best_val_mae": 10.946236559139784
+}
