@@ -1,0 +1,2 @@
+# The dashboard is deployed as static files and /api requests are rewritten to Railway.
+api/

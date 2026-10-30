@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "dashboard",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://4algae-api.up.railway.app/api/:path*"
+    }
+  ]
+}
